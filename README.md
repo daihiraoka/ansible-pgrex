@@ -2,43 +2,37 @@
 
 # PG-REX Ansible Playbook
 
-PG-REX は、Pacemaker リポジトリパッケージと PostgreSQL レプリケーション機能を組み合わせた、データベースの高可用ソリューションです。
+このリポジトリは、PG-REX10をインストールするための手順をAnsibleで自動化したPlaybookの例です。
 
-* PG-REX プロジェクトホームページ
-  * https://osdn.net/projects/pg-rex/
+kskmoriさんが作成したPG-REX9.5用のPG-REX Ansible Playbookリポジトリ[kskmori/ansible-pgrex](https://github.com/kskmori/ansible-pgrex)　をPG-REX10でも動作できるようにしてあります。
 
-このリポジトリは、PG-REX の付属ドキュメントに記載されたインストール手順を Ansible で自動化した Playbook の例です。
+kskmoriさんありがとうございます！
+
 [Pacemaker リポジトリパッケージ用 Ansible Playbook](https://github.com/kskmori/ansible-pacemaker)と組み合わせて使用します。
 
 ## 対象バージョン・手順
 
 以下のページに記載されているバージョン・手順を Ansible Playbook にしたものです。
 
-* 対象バージョン: [PG-REX9.5 1.1.0] (https://osdn.net/projects/pg-rex/releases/66221)
+* 対象バージョン: [PG-REX10 1.1.0] (https://ja.osdn.net/projects/pg-rex/releases/p15690)
 
 ## 前提条件
 
 この　playbook を使うには以下の設定をあらかじめ行っておいてください。
 
-* PostgreSQL 本体および PG-REX 9.5 のツール類のパッケージは別途ダウンロードして以下のディレクトリへ配置しておくこと。
+* PostgreSQL 本体および PG-REX 10 のツール類のパッケージは別途ダウンロードして以下のディレクトリへ配置しておくこと。
   * 配置ディレクトリ: roles/pgrex-install/files/
   * 配置するファイル一覧:
     * [PostgreSQL公式ダウンロードサイト](https://www.postgresql.org/download/)から入手するもの
-      * postgresql95-9.5.*.rhel7.x86_64.rpm
-      * postgresql95-contrib-9.5.*.rhel7.x86_64.rpm
-      * postgresql95-docs-9.5.*.rhel7.x86_64.rpm
-      * postgresql95-libs-9.5.*.rhel7.x86_64.rpm
-      * postgresql95-server-9.5.*.rhel7.x86_64.rpm
+      * postgresql10-10.4-1PGDG.rhel7.x86_64.rpm
+      * postgresql10-contrib-10.4-1PGDG.rhel7.x86_64.rpm
+      * postgresql10-docs-10.4-1PGDG.rhel7.x86_64.rpm
+      * postgresql10-libs-10.4-1PGDG.rhel7.x86_64.rpm
+      * postgresql10-server-10.4-1PGDG.rhel7.x86_64.rpm
     * [PG-REXプロジェクト](https://osdn.net/projects/pg-rex/)から入手するもの
       * IO_Tty-1.11-1.el7.x86_64.rpm
       * Net_OpenSSH-0.62-1.el7.x86_64.rpm
-      * pg-rex_operation_tools_script-1.7.2-1.el7.noarch.rpm
-
-* [Pacemaker リポジトリパッケージ用 Ansible Playbook](https://github.com/kskmori/ansible-pacemaker)を実行するために必要な準備・ファイルのダウンロードを完了しておくこと。
-* STONITH機能の利用に必要なパッケージのインストールと設定を完了していること。
-  * IPMI(物理環境の場合): ipmitools パッケージのインストール、ハードウェアのIPMIデバイスの設定
-  * libvirt(仮想環境の場合): libvirt-client パッケージのインストール、ホストへのsshパスワード無しログイン設定
-* OSメディアもしくはリポジトリが参照できるように /etc/yum.repo.d を設定しておくこと(OS標準の依存パッケージを自動的にインストールするため)
+      * pg-rex_operation_tools_script-10.0-1.el7.noarch.rpm
 
 ## Pacemaker リポジトリパッケージのインストール
 
@@ -98,9 +92,3 @@ PG-REX は、Pacemaker リポジトリパッケージと PostgreSQL レプリケ
 
   > $ ansible-playbook -u root -i hosts -e DROP_DB=true 99-pgrex-uninstall.yml
 
-
-## 補足
-
-* 本 playbook は、Pacemaker 本体の設定と独立して実行やバージョンアップができるように playbook をあえて分離しています。実システムへの適用時は、それぞれを適宜組み合わせて playbook を作成するなどの部品として活用していただければと思います。
-* playbook のファイル名の数字は単にファイル名のソート順のために付与したもので深い意味はありません。
-* 19-pgrex-crm-config.yml は リソース設定の変更(Pacemaker設定ファイルの再作成と /etc/pm_logconv.conf 再設定)のみを行いたい場合に利用できます。通常は 10-pgrex-install.yml を利用するだけで充分です。
